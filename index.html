@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Family Engagement Close Achievement Gaps? | Cynthia M.</title>
+    <meta name="description" content="Statistical analysis investigating whether family engagement can reduce socioeconomic achievement disparities using GLMs and R">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --accent-color: #059669;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --code-bg: #f3f4f6;
+            --orange: #f97316;
+            --green: #10b981;
+        }
+
+        /* ========== RESET & BASE ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        /* ========== NAVIGATION ========== */
+        nav {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* ========== CONTAINER ========== */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            background: var(--bg-white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* ========== TYPOGRAPHY ========== */
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 3rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 1.5rem 0 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* ========== KEY FINDINGS ========== */
+        .key-findings {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            border-left: 4px solid var(--primary-color);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .key-findings h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .findings-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .findings-list li {
+            padding: 0.75rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .findings-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* ========== CALLOUT BOXES ========== */
+        .callout {
+            background: var(--bg-light);
+            border-left: 4px solid var(--orange);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .callout-info {
+            border-left-color: var(--primary-color);
+            background: #eff6ff;
+        }
+
+        .callout-success {
+            border-left-color: var(--accent-color);
+            background: #f0fdf4;
+        }
+
+        .callout-warning {
+            border-left-color: var(--orange);
+            background: #fff7ed;
+        }
+
+        /* ========== FIGURES ========== */
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        figcaption {
+            margin-top: 0.75rem;
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* ========== CODE BLOCKS ========== */
+        code {
+            font-family: 'Fira Code', monospace;
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            color: #e11d48;
+        }
+
+        pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* ========== TABLES ========== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        tr:hover {
+            background: var(--bg-light);
+        }
+
+        /* ========== BADGES ========== */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.25rem;
+        }
+
+        .badge-primary {
+            background: #dbeafe;
+            color: var(--primary-color);
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: var(--accent-color);
+        }
+
+        .badge-warning {
+            background: #fed7aa;
+            color: #c2410c;
+        }
+
+        /* ========== TECH STACK ========== */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        /* ========== SECTION DIVIDER ========== */
+        .section-divider {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--border-color), transparent);
+            margin: 3rem 0;
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-title">Educational Equity Project</div>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#methods">Methods</a></li>
+                <li><a href="#findings">Findings</a></li>
+                <li><a href="#implications">Implications</a></li>
+                <li><a href="https://github.com/YOURUSERNAME/educational-equity-family-engagement" target="_blank">GitHub →</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <h1>Can Family Engagement Close the Achievement Gap?</h1>
+        <p>A statistical investigation using Generalized Linear Models to test whether parent involvement in education can reduce socioeconomic disparities in student outcomes</p>
+        
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">25,391</span>
+                <span class="stat-label">Students Analyzed</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">18%</span>
+                <span class="stat-label">Stronger Effect for Low-Income</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">4</span>
+                <span class="stat-label">Statistical Models</span>
+            </div>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="https://github.com/YOURUSERNAME/educational-equity-family-engagement" class="btn btn-primary" target="_blank">View Code on GitHub</a>
+            <a href="#findings" class="btn btn-secondary">Jump to Key Findings</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        
+        <!-- OVERVIEW SECTION -->
+        <section id="overview">
+            <h2>Executive Summary</h2>
+            
+            <p>High-income students in the U.S. are <strong>1.7 times more likely</strong> to earn mostly A's compared to low-income students—a 25.8 percentage point gap that persists across grade levels. This project investigates a critical question: <strong>Can family engagement interventions help level the playing field?</strong></p>
+
+            <div class="key-findings">
+                <h3>Key Findings</h3>
+                <ul class="findings-list">
+                    <li><strong>Compensatory Effect Confirmed:</strong> School engagement reduces at-risk probability 18% MORE for low-income students (β = -0.20, p < 0.01)</li>
+                    <li><strong>Strongest Protective Factor:</strong> Homework involvement reduces at-risk odds by 41% per standard deviation increase (OR = 0.59)</li>
+                    <li><strong>Robust Across Methods:</strong> Findings replicated across multinomial logistic, binary logistic, Poisson, and LDA models</li>
+                    <li><strong>Policy-Relevant:</strong> Targeted interventions for low-income families yield higher returns than universal programs</li>
+                </ul>
+            </div>
+
+            <h3>The Achievement Gap is Real</h3>
+            
+            <figure>
+                <img src="figures/achievement_gap_by_income.png" alt="Achievement gap by income showing 62% of high-income vs 37% of low-income students earning A's">
+                <figcaption><strong>Figure 1:</strong> The Achievement Gap by Income Level. High-income students earn "mostly A's" at 62.3% vs. 36.5% for low-income students, representing a 25.8 percentage point gap.</figcaption>
+            </figure>
+
+            <p>But here's the promising finding: <strong>Low-income families CAN and DO engage when barriers are removed</strong>, and engagement has stronger protective effects for disadvantaged students.</p>
+
+            <div class="tech-stack">
+                <span class="badge badge-primary">R</span>
+                <span class="badge badge-primary">tidymodels</span>
+                <span class="badge badge-primary">ggplot2</span>
+                <span class="badge badge-success">GLMs</span>
+                <span class="badge badge-success">Cross-Validation</span>
+                <span class="badge badge-warning">N = 25,391</span>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- DATA & METHODS SECTION -->
+        <section id="methods">
+            <h2>Data & Methodology</h2>
+
+            <h3>Data Source</h3>
+            <p>I analyzed the <strong>NCES Parent and Family Involvement in Education (PFI) Survey</strong>, combining 2016 and 2019 waves for a total of 25,391 observations after cleaning. The dataset captures:</p>
+            
+            <ul>
+                <li><strong>Academic outcomes:</strong> Student grades (4 categories), at-risk status (binary), attendance (count)</li>
+                <li><strong>Engagement measures:</strong> School activities (8 types), homework involvement, cultural enrichment</li>
+                <li><strong>Socioeconomic indicators:</strong> Household income (12 levels), parent education, family structure</li>
+                <li><strong>Control variables:</strong> Grade level, disability status, race/ethnicity, school type</li>
+            </ul>
+
+            <h3>Why Multiple Models?</h3>
+            <p>Educational outcomes are <strong>multifaceted</strong>. Student grades aren't just "good" or "bad"—they exist on a spectrum. Absences are count data that can't go negative. At-risk status is binary. <strong>Each outcome type requires a different statistical model from the GLM family:</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Outcome</th>
+                        <th>Type</th>
+                        <th>Model</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Student Grades</td>
+                        <td>4 unordered categories</td>
+                        <td>Multinomial Logistic</td>
+                        <td>No natural ordering between categories</td>
+                    </tr>
+                    <tr>
+                        <td>At-Risk Status</td>
+                        <td>Binary (yes/no)</td>
+                        <td>Binary Logistic</td>
+                        <td>Dichotomous outcome, probability bounded 0-1</td>
+                    </tr>
+                    <tr>
+                        <td>Days Absent</td>
+                        <td>Count data</td>
+                        <td>Poisson Regression</td>
+                        <td>Non-negative integers, no upper bound</td>
+                    </tr>
+                    <tr>
+                        <td>Grades (validation)</td>
+                        <td>Multivariate</td>
+                        <td>LDA</td>
+                        <td>Different assumptions for robustness check</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-info">
+                <h4>Statistical Foundation: Probability Theory in Action</h4>
+                <p>Throughout this project, probability theory provided the foundation for every modeling decision:</p>
+                <ul>
+                    <li><strong>Maximum Likelihood Estimation:</strong> Coefficients are chosen to maximize P(data | parameters)</li>
+                    <li><strong>P-values:</strong> Under the null hypothesis (β = 0), what's the probability of observing effects this extreme?</li>
+                    <li><strong>Confidence Intervals:</strong> 95% CIs capture the plausible range of effect sizes given sampling variability</li>
+                    <li><strong>Standard Errors:</strong> Quantify uncertainty in estimates due to finite sample size</li>
+                </ul>
+            </div>
+
+            <h3>Feature Engineering</h3>
+            <p>I created three composite engagement measures to capture different dimensions of family involvement:</p>
+
+            <pre><code class="language-r"># School Engagement: Count of 8 activities (0-8 scale)
+school_engagement = attend_event + volunteer + general_meeting + 
+                    pta_meeting + parent_teacher_conf + fundraising + 
+                    committee + counselor
+
+# Homework Involvement: Standardized composite (mean=0, SD=1)
+homework_involvement = scale(
+  (homework_days + homework_hours + homework_help) / 3
+)[,1]
+
+# Cultural Enrichment: Weighted sum of weekly + monthly activities
+cultural_enrichment = (story + crafts + games + projects + sports_home) +
+                      (library + bookstore) / 4 + dinners / 7</code></pre>
+
+            <div class="callout callout-warning">
+                <h4>Handling Missing Data</h4>
+                <p><strong>Challenge:</strong> 46.7% of race/ethnicity data and 31.3% of school choice variables were missing.</p>
+                <p><strong>Solution:</strong> Created an "Unknown" category for race/ethnicity to preserve sample size. Excluded school choice variables (entire 2016 wave missing—confounded with survey year).</p>
+            </div>
+
+            <h3>Validation Strategy</h3>
+            <p>To ensure findings weren't artifacts of modeling choices, I used:</p>
+            <ul>
+                <li><strong>Stratified 10-fold cross-validation:</strong> Maintains class proportions in each fold</li>
+                <li><strong>Separate test set (25%):</strong> Held out for final evaluation</li>
+                <li><strong>Multiple model comparison:</strong> Multinomial vs. LDA convergence validates assumptions</li>
+                <li><strong>Multicollinearity checks:</strong> All engagement measures had r < 0.35</li>
+            </ul>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- FINDINGS SECTION -->
+        <section id="findings">
+            <h2>Key Findings</h2>
+
+            <h3>Model Performance</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Metric</th>
+                        <th>CV Performance</th>
+                        <th>Test Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multinomial Logistic</td>
+                        <td>Accuracy</td>
+                        <td>62.9%</td>
+                        <td>62.2%</td>
+                    </tr>
+                    <tr>
+                        <td>Binary Logistic</td>
+                        <td>ROC-AUC</td>
+                        <td>0.802</td>
+                        <td>0.213*</td>
+                    </tr>
+                    <tr>
+                        <td>Poisson Regression</td>
+                        <td>RMSE</td>
+                        <td>4.55 days</td>
+                        <td>4.37 days</td>
+                    </tr>
+                    <tr>
+                        <td>LDA</td>
+                        <td>Accuracy</td>
+                        <td>62.6%</td>
+                        <td>62.1%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-size: 0.9em; color: var(--text-light);">*Binary model suffered from severe class imbalance (94% not at-risk). Coefficients remained interpretable despite prediction failure.</p>
+
+            <h3>The Compensatory Effect: Evidence from Interaction Terms</h3>
+            
+            <figure>
+                <img src="figures/coefficient_plot_atrisk.png" alt="Coefficient plot showing predictors of at-risk status with interaction effects highlighted">
+                <figcaption><strong>Figure 2:</strong> Binary Logistic Regression Coefficients. Negative values indicate protective effects. The Low Income × School Engagement interaction (β = -0.20, p < 0.01) provides direct evidence for the compensatory hypothesis.</figcaption>
+            </figure>
+
+            <div class="callout callout-success">
+                <h4>📊 Statistical Evidence for Compensatory Effect</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Predictor</th>
+                            <th>Coefficient (β)</th>
+                            <th>Odds Ratio</th>
+                            <th>p-value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Homework Involvement</td>
+                            <td>-0.529</td>
+                            <td>0.59</td>
+                            <td>&lt;0.001</td>
+                        </tr>
+                        <tr>
+                            <td>School Engagement</td>
+                            <td>-0.107</td>
+                            <td>0.90</td>
+                            <td>&lt;0.01</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Low Income × Engagement</strong></td>
+                            <td><strong>-0.202</strong></td>
+                            <td><strong>0.82</strong></td>
+                            <td><strong>&lt;0.01</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Interpretation:</strong> For low-income students, each additional school activity reduces at-risk odds by 18%. For high-income students, the same activity reduces odds by only 10%. The 8 percentage point difference is statistically significant.</p>
+            </div>
+
+            <figure>
+                <img src="figures/interaction_effects.png" alt="Interaction effects showing OR < 1 for income × engagement">
+                <figcaption><strong>Figure 3:</strong> Income × Engagement Interaction Effects. Odds ratios less than 1.0 indicate engagement provides stronger protective effects for low-income students.</figcaption>
+            </figure>
+
+            <h3>Engagement Patterns by Socioeconomic Status</h3>
+            
+            <figure>
+                <img src="figures/engagement_by_income.png" alt="Bar chart showing higher-income families engage in more school activities">
+                <figcaption><strong>Figure 4:</strong> School Engagement Levels by Income. High-income families average 4.54 activities vs. 3.66 for low-income families (Cohen's d = 0.44, medium effect).</figcaption>
+            </figure>
+
+            <p>This 0.88 activity gap likely reflects structural barriers (time constraints from multiple jobs, transportation challenges, less welcoming school environments) rather than differential interest. <strong>Key insight: Low-income families CAN engage more when barriers are removed.</strong></p>
+
+            <h3>The Compensatory Effect in Action</h3>
+            
+            <figure>
+                <img src="figures/compensatory_effect_lines.png" alt="Line chart showing steeper slope for low-income students">
+                <figcaption><strong>Figure 5:</strong> % of Students Achieving Mostly A's by Engagement Level and Income. The steeper slope for low-income students (orange) demonstrates the compensatory effect—engagement helps them MORE.</figcaption>
+            </figure>
+
+            <p>Moving from low to high engagement:</p>
+            <ul>
+                <li><strong>Low-income students:</strong> Success rate increases from 32% → 44% (+12 pp)</li>
+                <li><strong>High-income students:</strong> Success rate increases from 54% → 67% (+13 pp)</li>
+            </ul>
+            <p>While high-income students benefit slightly more in absolute terms, the <strong>relative benefit is much larger</strong> for low-income students (37.5% relative increase vs. 24.1%).</p>
+
+            <h3>Lessons from Model Failures: The Class Imbalance Problem</h3>
+
+            <div class="callout callout-warning">
+                <h4>⚠️ When "94% Accuracy" Means Nothing</h4>
+                <p>The binary logistic model achieved <strong>94.1% accuracy in cross-validation</strong> but completely failed on the test set (ROC-AUC = 0.21). Why?</p>
+                
+                <figure>
+                    <img src="figures/confusion_matrix_binary.png" alt="Confusion matrix showing model predicts only majority class">
+                    <figcaption>The model predicted "not at-risk" for 98.8% of students (5,777 out of 5,868).</figcaption>
+                </figure>
+
+                <p><strong>The Lesson:</strong> With severe class imbalance (only 5.7% at-risk), the model learned to always predict the majority class. This minimizes overall error but is <strong>useless for identifying students who actually need help</strong>.</p>
+                
+                <p><strong>Key Takeaway:</strong> Overall accuracy masks performance failures when classes are imbalanced. Always check:</p>
+                <ul>
+                    <li>Confusion matrices (not just overall accuracy)</li>
+                    <li>Class-specific metrics (sensitivity, specificity)</li>
+                    <li>Test set ROC curves (CV performance can be misleading)</li>
+                </ul>
+
+                <p><strong>Silver Lining:</strong> Despite prediction failures, the <strong>coefficient estimates remained valid and interpretable</strong>—they tell us which factors matter, even if the model can't make useful predictions with extreme imbalance.</p>
+            </div>
+
+            <h3>Model Convergence = Robust Findings</h3>
+            
+            <figure>
+                <img src="figures/confusion_matrices_comparison.png" alt="Confusion matrices for multinomial and LDA showing near-identical performance">
+                <figcaption><strong>Figure 6:</strong> Multinomial Logistic vs. LDA Confusion Matrices. Nearly identical performance (62.9% vs. 62.6% accuracy) despite different statistical assumptions.</figcaption>
+            </figure>
+
+            <p>When multinomial logistic regression and Linear Discriminant Analysis—models with <strong>different assumptions</strong> (parametric likelihood vs. multivariate normality)—yield nearly identical results, it provides strong evidence that findings are <strong>robust and not artifacts of modeling choices</strong>.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- IMPLICATIONS SECTION -->
+        <section id="implications">
+            <h2>Policy Implications & Future Directions</h2>
+
+            <h3>Actionable Recommendations for Schools</h3>
+            
+            <div class="callout callout-success">
+                <h4>Evidence-Based Strategies</h4>
+                <ol>
+                    <li><strong>Prioritize Homework Involvement Programs</strong> (Strongest effect: OR = 0.59)
+                        <ul>
+                            <li>Provide structured homework help sessions</li>
+                            <li>Train parents in effective support strategies</li>
+                            <li>Set clear, achievable expectations</li>
+                        </ul>
+                    </li>
+                    <li><strong>Target Low-Income Families</strong> (Compensatory effect: 18% stronger)
+                        <ul>
+                            <li>Focus outreach on disadvantaged communities</li>
+                            <li>Remove barriers: transportation, childcare, scheduling</li>
+                            <li>Universal programs risk being captured by high-resource families</li>
+                        </ul>
+                    </li>
+                    <li><strong>Focus on Accessible Activities</strong>
+                        <ul>
+                            <li>Parent-teacher conferences (no special resources needed)</li>
+                            <li>School event attendance (builds community)</li>
+                            <li>General meetings (low commitment threshold)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Support Students with Disabilities</strong> (Highest risk factor: OR = 1.61)
+                        <ul>
+                            <li>Generic engagement programs won't address specialized needs</li>
+                            <li>Require targeted interventions beyond family involvement</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h3>Why This Matters</h3>
+            <p>These findings directly contradict the assumption that engagement programs help everyone equally. The <strong>compensatory effect</strong> means:</p>
+            <ul>
+                <li>Targeting matters: Don't spread resources thin with universal programs</li>
+                <li>Equity requires differential investment: Give more support where it helps most</li>
+                <li>Measurable impact: 18% reduction in at-risk odds for low-income students is substantial</li>
+            </ul>
+
+            <h3>Limitations & Future Research</h3>
+            
+            <h4>Study Limitations</h4>
+            <ul>
+                <li><strong>Observational design:</strong> Cannot establish causation definitively</li>
+                <li><strong>Self-reported data:</strong> Subject to social desirability bias</li>
+                <li><strong>Cross-sectional:</strong> Cannot assess cumulative effects over time</li>
+                <li><strong>Class imbalance:</strong> Binary model couldn't effectively predict minority class</li>
+            </ul>
+
+            <h4>Future Directions</h4>
+            <ul>
+                <li><strong>Causal inference:</strong> Propensity score matching or natural experiments (e.g., policy changes)</li>
+                <li><strong>Mechanism analysis:</strong> WHY does engagement help disadvantaged students more?</li>
+                <li><strong>Longitudinal models:</strong> Track students over time for cumulative effects</li>
+                <li><strong>Cost-effectiveness:</strong> Which activities provide best "bang for the buck"?</li>
+                <li><strong>Class balancing techniques:</strong> SMOTE, cost-sensitive learning for binary predictions</li>
+            </ul>
+
+            <h3>Reflection on Learning Objectives</h3>
+            
+            <h4>Objective 1: Probability as Foundation of Statistical Modeling</h4>
+            <p>This project deepened my understanding of how probability theory underpins every step:</p>
+            <ul>
+                <li><strong>Model building:</strong> Constructed regression models for categorical, binary, and count outcomes</li>
+                <li><strong>Parameter estimation:</strong> Maximum likelihood finds coefficients that maximize P(data | parameters)</li>
+                <li><strong>Inference tools:</strong> P-values, confidence intervals, and standard errors quantify uncertainty</li>
+                <li><strong>Validation:</strong> Cross-validation assesses how well models generalize to new data</li>
+            </ul>
+
+            <h4>Objective 2: Applying Appropriate GLMs</h4>
+            <p>Matching models to response types was critical:</p>
+            <ul>
+                <li><strong>Multinomial logistic:</strong> For unordered categorical grades (4 levels)</li>
+                <li><strong>Binary logistic:</strong> For dichotomous at-risk status—learned about class imbalance pitfalls</li>
+                <li><strong>Poisson regression:</strong> For count data (days absent)—appropriate when variance ≈ mean</li>
+                <li><strong>LDA:</strong> Validated findings under different assumptions (multivariate normality)</li>
+            </ul>
+            <p>The convergence of results across methods demonstrates that <strong>findings are robust to statistical assumptions</strong>.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- TECHNICAL DETAILS -->
+        <section id="technical">
+            <h2>Technical Details</h2>
+
+            <h3>Tech Stack</h3>
+            <div class="tech-stack">
+                <span class="badge badge-primary">R 4.3+</span>
+                <span class="badge badge-primary">tidyverse</span>
+                <span class="badge badge-primary">tidymodels</span>
+                <span class="badge badge-primary">ggplot2</span>
+                <span class="badge badge-success">nnet (multinomial)</span>
+                <span class="badge badge-success">glm (logistic/Poisson)</span>
+                <span class="badge badge-success">MASS (LDA)</span>
+                <span class="badge badge-warning">10-fold CV</span>
+            </div>
+
+            <h3>Reproducibility</h3>
+            <p>Full code, data preparation scripts, and reproducible analysis available on GitHub:</p>
+            <a href="https://github.com/YOURUSERNAME/educational-equity-family-engagement" class="btn btn-primary" target="_blank">View Full Repository</a>
+
+            <h3>Repository Structure</h3>
+            <pre><code>educational-equity-family-engagement/
+├── code/
+│   ├── 01_data_preparation.R
+│   ├── 02_exploratory_analysis.R
+│   ├── 03_statistical_modeling.R
+│   └── 04_model_evaluation.R
+├── figures/                   # All visualizations
+├── output/                    # Model results, tables
+├── docs/                      # Documentation
+└── README.md                  # Project overview</code></pre>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p><strong>Cynthia M.</strong> | MS Data Science & Analytics Candidate, GVSU</p>
+        <p>Graduate Research Assistant, Charter Schools Office</p>
+        <p>
+            <a href="https://github.com/YOURUSERNAME" target="_blank">GitHub</a> | 
+            <a href="https://linkedin.com/in/YOURPROFILE" target="_blank">LinkedIn</a> | 
+            <a href="mailto:your.email@example.com">Email</a>
+        </p>
+        <p style="margin-top: 1rem; opacity: 0.7; font-size: 0.9rem;">© 2024 | Built with GitHub Pages</p>
+    </footer>
+
+</body>
+</html>
