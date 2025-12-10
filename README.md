@@ -2,7 +2,6 @@
 
 [![R](https://img.shields.io/badge/R-4.0%2B-blue)](https://www.r-project.org/)
 [![tidymodels](https://img.shields.io/badge/tidymodels-1.0%2B-orange)](https://www.tidymodels.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Research Question:** Does family engagement in education serve a compensatory function, helping disadvantaged students more than their advantaged peers?
 
@@ -289,19 +288,14 @@ Each model makes specific distributional assumptions about the response.
 
 **Cynthia Mutua**
 - LinkedIn: [linkedin.com/in/cynthia-mutua]
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [[@ymutuac-bit](https://github.com/mutuac-bit))
 - Email: cmm.mutua@gmail.com
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+-      : mutuac@mail.gvsu.edu
 
 ---
 
-⭐ **If you found this analysis helpful, please consider giving it a star!**
+ **If you found this analysis helpful, please consider giving it a star!**
 
 ## Acknowledgments
-
-- Grand Valley State University Charter Schools Office
 - NCES for making PFI survey data publicly available
 - tidymodels team for excellent modeling framework
