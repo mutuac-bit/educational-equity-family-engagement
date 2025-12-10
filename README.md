@@ -190,13 +190,13 @@ lda_spec <- discrim_linear() %>%
 ## Key Visualizations
 
 ### Achievement Gap by Income
-<img src="output/figures/achievement_gap_dashboard.png" width="800">
+<img src="output/figures/achievement_gap_by_income.png.png" width="800">
 
 ### Compensatory Effect
-<img src="output/figures/predicted_probabilities.png" width="600">
+<img src="output/figures/predicted_probabilities.png.png" width="600">
 
 ### Model Coefficients
-<img src="output/figures/coefficient_plot_atrisk.png" width="700">
+<img src="output/figures/coefficient_plot_atrisk.png.png" width="700">
 
 ## 🔍 Model Diagnostics
 
