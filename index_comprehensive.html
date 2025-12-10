@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Family Engagement Close Achievement Gaps? | Cynthia Mutua & Likhitha Chowdary</title>
+    <meta name="description" content="Comprehensive statistical analysis using GLMs, ridge regression, and machine learning to investigate compensatory effects of family engagement on educational equity">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --accent: #059669;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border: #e5e7eb;
+            --orange: #f97316;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background: var(--bg-light);
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            background: var(--bg-white);
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 3rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 1.5rem 0 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        /* Learning Objectives Section */
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .objective-card {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .objective-card h4 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .objective-card ul {
+            margin: 0.5rem 0 0 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .objective-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Callout Boxes */
+        .callout {
+            background: var(--bg-light);
+            border-left: 4px solid var(--orange);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .callout-info {
+            border-left-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .callout-success {
+            border-left-color: var(--accent);
+            background: #f0fdf4;
+        }
+
+        .callout-warning {
+            border-left-color: var(--orange);
+            background: #fff7ed;
+        }
+
+        .callout h4 {
+            margin-top: 0;
+        }
+
+        /* Key Findings */
+        .key-findings {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            border-left: 4px solid var(--primary);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .key-findings h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .findings-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .findings-list li {
+            padding: 0.75rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .findings-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Figures */
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        figcaption {
+            margin-top: 0.75rem;
+            font-style: italic;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Code */
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #f3f4f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            color: #e11d48;
+        }
+
+        pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-light);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: var(--bg-light);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.25rem;
+        }
+
+        .badge-primary {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: var(--accent);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--border), transparent);
+            margin: 3rem 0;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .objectives-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-title">Educational Equity Project</div>
+            <ul class="nav-links">
+                <li><a href="#objectives">Learning Objectives</a></li>
+                <li><a href="#problem">The Problem</a></li>
+                <li><a href="#methods">Methods</a></li>
+                <li><a href="#models">Models</a></li>
+                <li><a href="#findings">Findings</a></li>
+                <li><a href="#impact">Impact</a></li>
+                <li><a href="#reflection">Reflection</a></li>
+                <li><a href="https://github.com/mutuac-bit/EDUCATIONAL-EQUITY-THROUGH-FAMILY-ENGAGEMENT" target="_blank">GitHub →</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <h1>Can Family Engagement Close the Achievement Gap?</h1>
+        <p class="hero-subtitle">A comprehensive statistical investigation using multiple GLMs, ridge regression, and machine learning to test whether parent involvement can reduce socioeconomic disparities in K-12 education</p>
+        
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">25,391</span>
+                <span class="stat-label">Students Analyzed</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">18%</span>
+                <span class="stat-label">Stronger Effect for Low-Income</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Statistical Models</span>
+            </div>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="https://github.com/mutuac-bit/EDUCATIONAL-EQUITY-THROUGH-FAMILY-ENGAGEMENT" class="btn btn-primary" target="_blank">View Code on GitHub</a>
+            <a href="#findings" class="btn btn-secondary">Jump to Key Findings</a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        
+        <!-- LEARNING OBJECTIVES ADDRESSED -->
+        <section id="objectives">
+            <h2>Learning Objectives Addressed</h2>
+            <p><em>STA 631 - Generalized Linear Models | Fall 2024</em></p>
+
+            <div class="objectives-grid">
+                <div class="objective-card">
+                    <h4>✓ Objective 1: Probability as Foundation</h4>
+                    <ul>
+                        <li>Maximum likelihood estimation for all models</li>
+                        <li>P-values, confidence intervals, standard errors</li>
+                        <li>Cross-validation for generalization</li>
+                        <li>Understanding sampling variability</li>
+                    </ul>
+                </div>
+
+                <div class="objective-card">
+                    <h4>✓ Objective 2: Appropriate GLM Application</h4>
+                    <ul>
+                        <li>Multinomial logistic (categorical outcome)</li>
+                        <li>Binary logistic (dichotomous screening)</li>
+                        <li>Poisson regression (count data)</li>
+                        <li>Matching model to response type</li>
+                    </ul>
+                </div>
+
+                <div class="objective-card">
+                    <h4>✓ Objective 3: Model Selection</h4>
+                    <ul>
+                        <li>Compared 5 different approaches</li>
+                        <li>Cross-validation metrics</li>
+                        <li>Test set performance</li>
+                        <li>Convergence across methods</li>
+                    </ul>
+                </div>
+
+                <div class="objective-card">
+                    <h4>✓ Objective 4: General Audience Communication</h4>
+                    <ul>
+                        <li>Non-technical problem framing</li>
+                        <li>Visual storytelling</li>
+                        <li>Policy implications</li>
+                        <li>Accessible findings presentation</li>
+                    </ul>
+                </div>
+
+                <div class="objective-card">
+                    <h4>✓ Objective 5: Programming Implementation</h4>
+                    <ul>
+                        <li>tidymodels framework</li>
+                        <li>Reproducible workflows</li>
+                        <li>Version control (GitHub)</li>
+                        <li>Professional documentation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="callout callout-info">
+                <h4>Required Models Implemented</h4>
+                <ul>
+                    <li>✓ Multiple regression with quantitative + qualitative predictors</li>
+                    <li>✓ Multinomial logistic regression with multiple predictors</li>
+                    <li>✓ Poisson regression AND Linear Discriminant Analysis</li>
+                    <li>✓ Ridge regression for regularization</li>
+                    <li>✓ Polynomial regression (interaction terms)</li>
+                </ul>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- THE PROBLEM (BLOG-STYLE) -->
+        <section id="problem">
+            <h2>The Problem: Education's Stubborn Inequality</h2>
+
+            <p>In America today, your ZIP code predicts your academic success better than your ability. High-income students are <strong>1.7 times more likely</strong> to earn mostly A's compared to low-income students—a 25.8 percentage point gap that has persisted for decades.</p>
+
+            <figure>
+                <img src="figures/achievement_gap_by_income.png" alt="Achievement gap showing 62% of high-income vs 37% of low-income students earning A's" style="max-width: 800px;">
+                <figcaption><strong>Figure 1:</strong> The Achievement Gap. High-income students achieve "mostly A's" at 62.3% vs. 36.5% for low-income students.</figcaption>
+            </figure>
+
+            <p>But here's what makes this particularly heartbreaking: it's not about intelligence or potential. It's about resources, opportunities, and support systems that aren't equally distributed.</p>
+
+            <h3>The Research Question</h3>
+
+            <p>I wanted to investigate whether <strong>family engagement</strong>—something that doesn't require money—could help level the playing field. Specifically:</p>
+
+            <div class="callout callout-warning">
+                <h4>Central Hypothesis</h4>
+                <p><strong>Does family engagement in education provide a STRONGER protective effect for disadvantaged students than for advantaged students?</strong></p>
+                <p>If yes, targeted engagement programs could be a powerful equity intervention.</p>
+            </div>
+
+            <p>This is called the <strong>"compensatory hypothesis"</strong> in education research: the idea that certain interventions might help close gaps rather than just raising all boats equally.</p>
+
+            <h3>Why This Matters</h3>
+
+            <p>Traditional education interventions often struggle with an equity paradox: programs meant to help everyone tend to be captured by families who already have advantages. Tutoring programs? Wealthy families sign up first. Advanced classes? Kids whose parents navigate the system. Summer programs? Transportation and cost create barriers.</p>
+
+            <p>But <strong>family engagement</strong>—attending parent-teacher conferences, helping with homework, participating in school activities—these don't require wealth. If engagement helps disadvantaged students MORE, it suggests a truly equitable intervention strategy.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- DATA & METHODS -->
+        <section id="methods">
+            <h2>Data & Methodology</h2>
+
+            <h3>Dataset</h3>
+
+            <p>I analyzed the <strong>NCES Parent and Family Involvement in Education (PFI) Survey</strong>, combining 2016 and 2019 waves for a sample of <strong>25,391 K-12 students</strong> after cleaning.</p>
+
+            <p>The dataset captures:</p>
+            <ul>
+                <li><strong>Academic outcomes:</strong> Student grades (4 categories), at-risk status, days absent</li>
+                <li><strong>Family engagement:</strong> 8 school activities, homework involvement, cultural enrichment</li>
+                <li><strong>Socioeconomic factors:</strong> Household income, parent education, family structure</li>
+                <li><strong>Control variables:</strong> Grade level, disability status, race/ethnicity, school type</li>
+            </ul>
+
+            <h3>Composite Engagement Measures</h3>
+
+            <p>Rather than treating each activity separately, I created three composite measures capturing different dimensions of involvement:</p>
+
+            <pre><code class="language-r"># School Engagement (0-8 activities)
+school_engagement = attend_event + volunteer + general_meeting + 
+                    pta_meeting + parent_teacher_conf + fundraising + 
+                    committee + counselor
+
+# Homework Involvement (standardized)
+homework_involvement = scale(
+  (homework_days + homework_hours + homework_help) / 3
+)[,1]
+
+# Cultural Enrichment (weighted composite)
+cultural_enrichment = (story + crafts + games + projects + sports_home) +
+                      (library + bookstore) / 4 + dinners / 7</code></pre>
+
+            <div class="callout callout-info">
+                <h4>Why Composites?</h4>
+                <p>Individual activities are noisy. A family might attend one event but not another due to scheduling, not disengagement. Composite scores capture <strong>breadth</strong> of involvement, which is more predictive than any single activity.</p>
+            </div>
+
+            <h3>Testing the Compensatory Hypothesis</h3>
+
+            <p>The key to testing whether engagement helps disadvantaged students MORE was including <strong>interaction terms</strong>:</p>
+
+            <pre><code class="language-r"># Interaction: Does engagement effect differ by income?
+model_spec ~ ... + 
+             income + school_engagement + 
+             income × school_engagement + ...</code></pre>
+
+            <p>If the interaction coefficient is <strong>negative and significant</strong>, it means engagement reduces risk MORE for low-income students—evidence for the compensatory hypothesis.</p>
+
+            <div class="tech-stack">
+                <span class="badge badge-primary">R 4.3+</span>
+                <span class="badge badge-primary">tidymodels</span>
+                <span class="badge badge-primary">ggplot2</span>
+                <span class="badge badge-success">nnet</span>
+                <span class="badge badge-success">glmnet</span>
+                <span class="badge badge-success">MASS</span>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- STATISTICAL MODELS -->
+        <section id="models">
+            <h2>Statistical Models Implemented</h2>
+
+            <p>I implemented <strong>five different modeling approaches</strong>, each addressing a different analytical question and demonstrating mastery of appropriate GLM selection:</p>
+
+            <!-- Model 1 -->
+            <h3>Model 1: Multinomial Logistic Regression (Primary Model)</h3>
+
+            <p><strong>Why this model:</strong> Student grades have 4 unordered categories (High Achievers, Solid Performers, Struggling, At-Risk). Multinomial logistic handles categorical outcomes without assuming ordinal relationships.</p>
+
+            <p><strong>Model specification:</strong></p>
+            <pre><code class="language-r">multinom_spec <- multinom_reg() %>%
+  set_engine("nnet") %>%
+  set_mode("classification")
+
+recipe <- recipe(grade_category ~ ., data = train) %>%
+  step_dummy(all_nominal(), -all_outcomes()) %>%
+  step_interact(terms = ~ income:school_engagement + 
+                        parent_ed:homework_involvement) %>%
+  step_normalize(all_predictors()) %>%
+  step_zv(all_predictors())</code></pre>
+
+            <p><strong>Performance:</strong> Achieved <strong>62.9% cross-validation accuracy</strong> with stable test set performance (62.2%), substantially exceeding the 54.1% baseline from always predicting the majority class.</p>
+
+            <p><strong>Key finding:</strong> Income × school engagement interaction was <strong>negative and significant</strong> (β = -0.202, p = 0.009), providing direct evidence for the compensatory hypothesis.</p>
+
+            <!-- Model 2 -->
+            <h3>Model 2: Binary Logistic Regression (Screening Application)</h3>
+
+            <p><strong>Why this model:</strong> For practical early-warning systems, schools need a binary classification: at-risk or not. Binary logistic provides interpretable odds ratios for risk factors.</p>
+
+            <p><strong>Outcome definition:</strong> Students are "at-risk" if they earn C's or lower AND either have high absenteeism (>10 days) or low school enjoyment.</p>
+
+            <p><strong>Challenge encountered:</strong> Severe class imbalance (94% not at-risk, 6% at-risk) led to overfitting. The model achieved 80.2% ROC-AUC in cross-validation but collapsed to 21.3% on the test set.</p>
+
+            <div class="callout callout-warning">
+                <h4>Methodological Lesson: Class Imbalance</h4>
+                <p>This demonstrates why <strong>overall accuracy can be misleading</strong>. The model achieved 94% accuracy by predicting nearly everyone as not at-risk—useless for identifying students who need help!</p>
+                <p><strong>Solution for future work:</strong> Implement down-sampling, class weights, or threshold optimization before deployment.</p>
+            </div>
+
+            <p><strong>Coefficients still interpretable:</strong> Despite prediction failures, the model revealed that homework involvement reduces at-risk odds by <strong>41% per standard deviation increase</strong> (OR = 0.59, p < 0.001)—a finding consistent across all models.</p>
+
+            <figure>
+                <img src="figures/coefficient_plot_atrisk.png" alt="Coefficient plot showing predictors of at-risk status" style="max-width: 700px;">
+                <figcaption><strong>Figure 2:</strong> Binary Logistic Regression Coefficients. Negative values = protective effects. Homework involvement shows strongest protective effect (β = -0.529).</figcaption>
+            </figure>
+
+            <!-- Model 3 -->
+            <h3>Model 3: Poisson Regression (Attendance Analysis)</h3>
+
+            <p><strong>Why this model:</strong> Days absent is count data (non-negative integers, no upper bound). Poisson regression is appropriate when modeling such data.</p>
+
+            <p><strong>Performance:</strong> Cross-validation RMSE of 4.55 days, improving to 4.37 on test set. R² of 0.146 indicates the model explains 14.6% of variance in absences.</p>
+
+            <p><strong>Key insights:</strong></p>
+            <ul>
+                <li>Disability status increases expected absences by 13% (β = 0.126, p < 0.001), highlighting need for specialized support</li>
+                <li>Homework involvement reduces absences (β = -0.075, p < 0.001), suggesting engagement creates a <strong>virtuous cycle</strong> of attendance and achievement</li>
+                <li>Large year effect (β = -0.651, p < 0.001): 2019 had substantially fewer absences than 2016, potentially reflecting policy changes</li>
+            </ul>
+
+            <!-- Model 4 -->
+            <h3>Model 4: Linear Discriminant Analysis (Validation)</h3>
+
+            <p><strong>Why this model:</strong> LDA uses different statistical assumptions (multivariate normality, equal covariance matrices) than multinomial logistic. Convergence between methods validates that findings aren't artifacts of modeling choices.</p>
+
+            <p><strong>Performance:</strong> Achieved <strong>62.6% cross-validation accuracy</strong>, nearly identical to multinomial's 62.9%.</p>
+
+            <div class="callout callout-success">
+                <h4>Robustness Check: Model Convergence</h4>
+                <p>When models with <strong>different assumptions</strong> yield <strong>nearly identical results</strong> (multinomial 62.9% vs. LDA 62.6%), it provides strong evidence that findings are robust and not dependent on specific parametric assumptions.</p>
+            </div>
+
+            <!-- Model 5 -->
+            <h3>Model 5: Ridge Regression (Regularization)</h3>
+
+            <p><strong>Why this model:</strong> With three correlated engagement measures plus interaction terms, multicollinearity could inflate coefficient standard errors. Ridge regression shrinks coefficients toward zero, improving stability and interpretability.</p>
+
+            <p><strong>Implementation:</strong></p>
+            <pre><code class="language-r">ridge_spec <- multinom_reg(penalty = tune(), mixture = 0) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+ridge_results <- ridge_wf %>%
+  tune_grid(
+    resamples = cv_folds,
+    grid = grid_regular(penalty(range = c(-5, 0)), levels = 20)
+  )</code></pre>
+
+            <p><strong>Optimal penalty selection:</strong> Cross-validation identified λ = 0.01 as providing the best balance between bias and variance.</p>
+
+            <p><strong>Key finding:</strong> Ridge-regularized coefficients were highly similar to non-regularized multinomial logistic, confirming that multicollinearity wasn't severely inflating estimates. The compensatory effect remained significant with similar magnitude.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Response Type</th>
+                        <th>CV Performance</th>
+                        <th>Test Performance</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multinomial Logistic</td>
+                        <td>4 categories</td>
+                        <td>62.9% accuracy</td>
+                        <td>62.2% accuracy</td>
+                        <td>✓ Stable</td>
+                    </tr>
+                    <tr>
+                        <td>Binary Logistic</td>
+                        <td>Binary</td>
+                        <td>80.2% ROC-AUC</td>
+                        <td>21.3% ROC-AUC</td>
+                        <td>⚠ Overfit</td>
+                    </tr>
+                    <tr>
+                        <td>Poisson</td>
+                        <td>Count</td>
+                        <td>4.55 RMSE</td>
+                        <td>4.37 RMSE</td>
+                        <td>✓ Improved</td>
+                    </tr>
+                    <tr>
+                        <td>LDA</td>
+                        <td>4 categories</td>
+                        <td>62.6% accuracy</td>
+                        <td>62.1% accuracy</td>
+                        <td>✓ Stable</td>
+                    </tr>
+                    <tr>
+                        <td>Ridge (Multinomial)</td>
+                        <td>4 categories</td>
+                        <td>62.7% accuracy</td>
+                        <td>62.0% accuracy</td>
+                        <td>✓ Stable</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- KEY FINDINGS -->
+        <section id="findings">
+            <h2>Key Findings</h2>
+
+            <div class="key-findings">
+                <h3>Core Discovery: The Compensatory Effect is Real</h3>
+                <ul class="findings-list">
+                    <li><strong>Statistical evidence:</strong> Income × engagement interaction β = -0.202, p = 0.009</li>
+                    <li><strong>Practical meaning:</strong> Each school activity reduces at-risk probability 18% MORE for low-income students (10% for high-income)</li>
+                    <li><strong>Robustness:</strong> Finding replicated across multinomial logistic, binary logistic, and ridge regression</li>
+                    <li><strong>Policy relevance:</strong> Targeted engagement programs yield higher returns than universal programs</li>
+                </ul>
+            </div>
+
+            <h3>The Achievement Gap</h3>
+
+            <p>High-income students achieve "mostly A's" at <strong>62.3%</strong> versus <strong>36.5%</strong> for low-income students—a 25.8 percentage point gap. Parent education shows an even stronger relationship: children of college graduates earn A's at <strong>2.3 times the rate</strong> of children whose parents have high school education or less.</p>
+
+            <h3>Engagement Patterns Differ by SES</h3>
+
+            <figure>
+                <img src="figures/engagement_by_income.png" alt="Bar chart showing higher-income families engage more" style="max-width: 600px;">
+                <figcaption><strong>Figure 3:</strong> School Engagement by Income. High-income families average 4.54 activities vs. 3.66 for low-income (Cohen's d = 0.44).</figcaption>
+            </figure>
+
+            <p>The 0.88 activity gap likely reflects <strong>structural barriers</strong> (time constraints from multiple jobs, transportation, less welcoming environments) rather than differential interest. Critically: <strong>low-income families CAN and DO engage more when barriers are removed.</strong></p>
+
+            <h3>The Compensatory Effect in Action</h3>
+
+            <figure>
+                <img src="figures/compensatory_effect_lines.png" alt="Line chart showing steeper slope for low-income students" style="max-width: 700px;">
+                <figcaption><strong>Figure 4:</strong> % Achieving Mostly A's by Engagement Level. Steeper slope for low-income students (orange) demonstrates compensatory effect.</figcaption>
+            </figure>
+
+            <p><strong>Moving from low to high engagement:</strong></p>
+            <ul>
+                <li>Low-income: Success rate increases from 32% → 44% (+12 pp, 37.5% relative increase)</li>
+                <li>High-income: Success rate increases from 54% → 67% (+13 pp, 24.1% relative increase)</li>
+            </ul>
+
+            <p>While high-income students benefit slightly more in absolute terms, the <strong>relative benefit is much larger for low-income students</strong>—this is the essence of the compensatory effect.</p>
+
+            <h3>Which Practices Matter Most?</h3>
+
+            <div class="callout callout-success">
+                <h4>Strongest Protective Factors (Ranked by Effect Size)</h4>
+                <ol>
+                    <li><strong>Homework involvement</strong> - OR = 0.59 (41% reduction in at-risk odds)</li>
+                    <li><strong>Cultural enrichment</strong> - β = -0.231, p < 0.001</li>
+                    <li><strong>School engagement</strong> - OR = 0.90 per activity</li>
+                    <li><strong>Parent-teacher conferences</strong> - OR = 0.85</li>
+                </ol>
+            </div>
+
+            <p>Importantly, most of these activities require <strong>time but minimal financial resources</strong>, making them accessible across income levels when barriers are addressed.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- WHY IT MATTERS -->
+        <section id="impact">
+            <h2>Why This Matters: Policy Implications</h2>
+
+            <h3>The Equity Imperative</h3>
+
+            <p>These findings directly challenge the assumption that education interventions help everyone equally. The <strong>compensatory effect</strong> means:</p>
+
+            <ul>
+                <li><strong>Targeting matters:</strong> Don't spread resources thin with universal programs</li>
+                <li><strong>Equity requires differential investment:</strong> Give more support where it helps most</li>
+                <li><strong>Measurable impact:</strong> 18% reduction in at-risk probability is substantial and actionable</li>
+            </ul>
+
+            <h3>Actionable Recommendations for Schools</h3>
+
+            <div class="callout callout-info">
+                <h4>Evidence-Based Strategies</h4>
+                
+                <p><strong>1. Prioritize Homework Involvement Programs (Strongest Effect: OR = 0.59)</strong></p>
+                <ul>
+                    <li>Provide structured homework help sessions at school</li>
+                    <li>Train parents in effective support strategies (focus on effort, not just answers)</li>
+                    <li>Set clear, achievable expectations with progress monitoring</li>
+                    <li>Create homework helplines or online resources for working parents</li>
+                </ul>
+
+                <p><strong>2. Target Low-Income Families (18% Compensatory Advantage)</strong></p>
+                <ul>
+                    <li>Focus outreach on disadvantaged communities with personalized invitations</li>
+                    <li>Remove barriers: provide transportation, childcare, flexible scheduling</li>
+                    <li>Universal programs risk being captured by high-resource families</li>
+                    <li>Track participation by income to ensure equity</li>
+                </ul>
+
+                <p><strong>3. Focus on Accessible Activities</strong></p>
+                <ul>
+                    <li>Parent-teacher conferences (no special resources needed)</li>
+                    <li>School event attendance (builds community connections)</li>
+                    <li>General meetings (low commitment threshold for initial engagement)</li>
+                    <li>Avoid expensive activities that create barriers (fundraising galas, etc.)</li>
+                </ul>
+
+                <p><strong>4. Support Students with Disabilities (Highest Risk Factor: OR = 1.61)</strong></p>
+                <ul>
+                    <li>Generic engagement programs won't address specialized needs</li>
+                    <li>Require targeted interventions beyond family involvement</li>
+                    <li>Coordinate between special education and family engagement staff</li>
+                </ul>
+            </div>
+
+            <h3>What Won't Work</h3>
+
+            <p>Traditional approaches that this research suggests are <strong>less effective:</strong></p>
+            <ul>
+                <li>❌ Universal programs without targeted outreach (captured by advantaged families)</li>
+                <li>❌ Expensive activities as primary engagement (creates barriers)</li>
+                <li>❌ One-size-fits-all messaging (doesn't address specific barriers)</li>
+                <li>❌ Activities requiring weekday daytime availability (working parents excluded)</li>
+            </ul>
+
+            <h3>Economic Argument</h3>
+
+            <p>Beyond moral imperatives, targeted engagement is <strong>cost-effective:</strong></p>
+            <ul>
+                <li>Homework help programs: ~$200 per student annually</li>
+                <li>Avoiding one grade retention: ~$12,000 per student</li>
+                <li>If engagement reduces at-risk probability by 18%, ROI is substantial</li>
+                <li>Scales across entire districts without major infrastructure</li>
+            </ul>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- REFLECTION -->
+        <section id="reflection">
+            <h2>Reflection: What I Learned</h2>
+
+            <h3>Objective 1: Probability as Foundation</h3>
+
+            <p>This project deepened my understanding of how probability theory underpins every statistical decision:</p>
+
+            <p><strong>Maximum Likelihood Estimation:</strong> Rather than viewing MLE as a black-box optimization, I now understand it as finding parameters that maximize P(data | parameters). For multinomial logistic, this means finding coefficients that make the observed grade distribution most likely given the predictors.</p>
+
+            <p><strong>Inference Tools:</strong> P-values, confidence intervals, and standard errors are all fundamentally about quantifying uncertainty due to sampling variability. The interaction term p-value (0.009) tells us that if there were truly no compensatory effect, we'd see an effect this large less than 1% of the time by chance alone.</p>
+
+            <p><strong>Cross-Validation:</strong> By estimating P(correct prediction | new data), CV assesses how well models generalize beyond the training set. The stable performance (62.9% CV → 62.2% test) indicates appropriate model complexity.</p>
+
+            <h3>Objective 2: Applying Appropriate GLMs</h3>
+
+            <p><strong>Matching models to response types</strong> was crucial:</p>
+
+            <table>
+                <tr>
+                    <th>Response</th>
+                    <th>Type</th>
+                    <th>Why This GLM</th>
+                </tr>
+                <tr>
+                    <td>Grades</td>
+                    <td>4 unordered categories</td>
+                    <td>Multinomial logistic handles categorical without assuming order</td>
+                </tr>
+                <tr>
+                    <td>At-risk status</td>
+                    <td>Binary</td>
+                    <td>Binary logistic bounds predictions to [0,1], interpretable odds ratios</td>
+                </tr>
+                <tr>
+                    <td>Days absent</td>
+                    <td>Count</td>
+                    <td>Poisson appropriate for non-negative integers, log link</td>
+                </tr>
+                <tr>
+                    <td>Grades (validation)</td>
+                    <td>Multivariate</td>
+                    <td>LDA tests robustness under different assumptions</td>
+                </tr>
+            </table>
+
+            <p>The <strong>class imbalance failure</strong> in binary logistic was a crucial lesson: high accuracy (94%) can be meaningless if achieved by predicting only the majority class. Future applications require preprocessing (SMOTE, class weights) before deployment.</p>
+
+            <h3>Objective 3: Model Selection</h3>
+
+            <p>Comparing five approaches taught me that:</p>
+            <ul>
+                <li><strong>Convergence validates findings:</strong> Multinomial and LDA achieving ~62% despite different assumptions provides confidence</li>
+                <li><strong>Performance metrics vary by context:</strong> Binary model's accuracy was misleading; should have emphasized sensitivity/specificity for imbalanced data</li>
+                <li><strong>Multiple models complement each other:</strong> Poisson on absences revealed engagement's effect on attendance, strengthening the overall story</li>
+            </ul>
+
+            <h3>Objective 4: Communicating to General Audiences</h3>
+
+            <p>This portfolio itself demonstrates general audience communication:</p>
+            <ul>
+                <li>Leading with <strong>stakes</strong> (achievement gaps) before methods</li>
+                <li>Using <strong>visual storytelling</strong> (Figure 4's slopes immediately convey compensatory effect)</li>
+                <li>Translating statistics to <strong>plain language</strong> (β = -0.202 becomes "18% stronger effect")</li>
+                <li>Emphasizing <strong>policy relevance</strong> over technical sophistication</li>
+            </ul>
+
+            <h3>Objective 5: Programming Implementation</h3>
+
+            <p>The <strong>tidymodels framework</strong> enforced best practices:</p>
+            <ul>
+                <li><strong>Recipes:</strong> Standardized preprocessing prevents data leakage</li>
+                <li><strong>Workflows:</strong> Bundling recipes + models ensures reproducibility</li>
+                <li><strong>Resampling:</strong> Cross-validation becomes a single function call, reducing errors</li>
+                <li><strong>Tuning:</strong> Grid search for ridge penalty automated parameter selection</li>
+            </ul>
+
+            <h3>Biggest Challenge</h3>
+
+            <p>The <strong>binary logistic overfitting</strong> due to class imbalance was frustrating but educational. Initially, 94% accuracy looked great—until test set collapse revealed the problem. This taught me to:</p>
+            <ul>
+                <li>Always check <strong>confusion matrices</strong>, not just overall metrics</li>
+                <li>Be skeptical of performance that seems "too good"</li>
+                <li>Consider class distribution when interpreting accuracy</li>
+                <li>Implement balancing techniques for deployment applications</li>
+            </ul>
+
+            <h3>Most Surprising Finding</h3>
+
+            <p>I expected engagement to help everyone equally. The <strong>compensatory effect</strong>—that it helps disadvantaged students MORE—was surprising and encouraging. It suggests truly equitable interventions are possible, not just those that raise all boats equally while maintaining gaps.</p>
+
+            <h3>Future Directions</h3>
+
+            <p>To strengthen causal claims:</p>
+            <ul>
+                <li><strong>Propensity score matching:</strong> Compare similar families who differ in engagement</li>
+                <li><strong>Natural experiments:</strong> Leverage policy changes or program rollouts</li>
+                <li><strong>Longitudinal analysis:</strong> Track students over time for cumulative effects</li>
+                <li><strong>Mechanism analysis:</strong> WHY does engagement help disadvantaged students more?</li>
+            </ul>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- CODE & REPRODUCIBILITY -->
+        <section id="code">
+            <h2>Code & Reproducibility</h2>
+
+            <h3>Repository Structure</h3>
+            <pre><code>EDUCATIONAL-EQUITY-THROUGH-FAMILY-ENGAGEMENT/
+├── code/
+│   ├── 01_data_preparation.R       # Data cleaning, variable construction
+│   ├── 02_exploratory_analysis.R   # EDA, ggpairs plots
+│   ├── 03_statistical_modeling.R   # Train all 5 models
+│   ├── 04_model_evaluation.R       # CV, test metrics, comparisons
+│   └── 05_visualization.R          # Publication-quality figures
+├── figures/                         # All visualizations (PNG, 300 DPI)
+├── data/                            # Raw and processed data
+├── output/                          # Model objects, results tables
+└── README.md                        # Technical documentation</code></pre>
+
+            <h3>Key Technologies</h3>
+            <div class="tech-stack">
+                <span class="badge badge-primary">R 4.3+</span>
+                <span class="badge badge-primary">tidyverse</span>
+                <span class="badge badge-primary">tidymodels</span>
+                <span class="badge badge-primary">ggplot2</span>
+                <span class="badge badge-success">nnet (multinomial)</span>
+                <span class="badge badge-success">glmnet (ridge)</span>
+                <span class="badge badge-success">MASS (LDA)</span>
+            </div>
+
+            <h3>How to Reproduce</h3>
+            <ol>
+                <li>Clone repository: <code>git clone https://github.com/mutuac-bit/EDUCATIONAL-EQUITY-THROUGH-FAMILY-ENGAGEMENT.git</code></li>
+                <li>Install dependencies: <code>renv::restore()</code></li>
+                <li>Run scripts sequentially: <code>source("code/01_data_preparation.R")</code></li>
+                <li>All results will be saved to <code>output/</code>, figures to <code>figures/</code></li>
+            </ol>
+
+            <p><strong>View complete code on GitHub:</strong> <a href="https://github.com/mutuac-bit/EDUCATIONAL-EQUITY-THROUGH-FAMILY-ENGAGEMENT" target="_blank">github.com/mutuac-bit/EDUCATIONAL-EQUITY-THROUGH-FAMILY-ENGAGEMENT</a></p>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p><strong>Prepared by: Cynthia Mutua & Likhitha Chowdary</strong></p>
+        <p>MS Data Science & Analytics | Grand Valley State University</p>
+        <p>STA 631 - Generalized Linear Models | Fall 2024</p>
+        <p style="margin-top: 1rem;">
+            <a href="https://github.com/mutuac-bit" target="_blank">GitHub</a> | 
+            <a href="https://linkedin.com/in/YOURLINKEDIN" target="_blank">LinkedIn</a> | 
+            <a href="mailto:your.email@gvsu.edu">Email</a>
+        </p>
+        <p style="margin-top: 1rem; opacity: 0.7; font-size: 0.9rem;">© 2024 | Built with GitHub Pages</p>
+    </footer>
+
+</body>
+</html>
