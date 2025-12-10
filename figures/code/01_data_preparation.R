@@ -1,9 +1,19 @@
-### 01_data_preparation.R
-### Educational Equity Through Family Engagement
-#### Prepared by: Cynthia Mutua
-Setup
+---
+title: "Educational Equity Project"
+author: "Cynthia M."
+format:
+  html:
+    code-fold: false
+    toc: true
+execute:
+  warning: false
+  message: false
+---
+
+#### Setup
+```{r setup}
 # Setup
-library(tidyverse)      
+library(tidyverse)      # Load this FIRST
 library(readxl)
 library(janitor)
 library(skimr)
@@ -20,8 +30,10 @@ theme_set(theme_minimal(base_size = 12))
 # Custom color palette (colorblind-friendly)
 project_colors <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", 
                     "#0072B2", "#D55E00", "#CC79A7")
+```
 
-### Import Data
+#### Import Data
+```{r import}
 # Read 2019 data
 pfi_2019 <- read_excel("pfi-data.xlsx", sheet = "curated 2019")
 
@@ -30,14 +42,15 @@ pfi_2016 <- read_excel("pfi-data.xlsx", sheet = "curated 2016")
 
 # Check dimensions
 cat("2019 data:", nrow(pfi_2019), "rows,", ncol(pfi_2019), "columns\n")
-
 cat("2016 data:", nrow(pfi_2016), "rows,", ncol(pfi_2016), "columns\n")
 
 # Check if column names match
 all_match <- identical(names(pfi_2019), names(pfi_2016))
 cat("\nColumn names match:", all_match, "\n")
+```
 
-Variable Selection & Creation
+#### Variable Selection & Creation
+```{r variable_selection}
 # Select key variables for analysis
 # (We'll expand this based on what we see in the data)
 
@@ -129,10 +142,19 @@ pfi_combined <- bind_rows(pfi_2019_selected, pfi_2016_selected)
 
 cat("Combined dataset:", nrow(pfi_combined), "rows,", 
     ncol(pfi_combined), "columns\n")
+```
+KEY VARIABLE SELECTION RATIONALE
+We select variables based on our theoretical framework:
+  1. OUTCOME VARIABLES: Academic performance indicators
+  2. ENGAGEMENT VARIABLES: Different dimensions of family involvement
+  3. SOCIOECONOMIC VARIABLES: For testing the compensatory hypothesis
+  4. CONTROL VARIABLES: Potential confounders to isolate engagement effects
+  
+#### Initial Data Inspection
 
-Initial Data Inspection
-#### DATA QUALITY ASSESSMENT Before any analysis, we need to understand our data structure, types, missing patterns, and value distributions.
-
+####DATA QUALITY ASSESSMENT
+Before any analysis, we need to understand our data structure, types, missing patterns, and value distributions.
+```{r inspect}
 # Look at first few rows
 head(pfi_combined)
 
@@ -141,8 +163,10 @@ glimpse(pfi_combined)
 
 # Summary statistics
 skim(pfi_combined)
+```
 
-Data Cleaning & Recoding
+#### Data Cleaning & Recoding
+```{r cleaning}
 # Data Cleaning & Recoding
 
 pfi_clean <- pfi_combined %>%
@@ -338,70 +362,77 @@ pfi_analysis <- pfi_analysis %>%
   filter(!is.na(grades_cat))
 
 cat("Final analysis dataset:", nrow(pfi_analysis), "observations\n")
-
 cat("\nVariables in final dataset:\n")
-
 print(names(pfi_analysis))
-       
-MISSING DATA PATTERN ANALYSIS
-Understanding missingness is crucial for: 1. Deciding which variables to include 2. Choosing appropriate handling strategies 3. Assessing potential bias 4. Check structure
+```
+
+# MISSING DATA PATTERN ANALYSIS
+Understanding missingness is crucial for:
+  1. Deciding which variables to include
+  2. Choosing appropriate handling strategies
+  3. Assessing potential bias
+  4. Check structure
+  
+  
+```{r missing data}
+#| label: missing-data
 
 cat("\n MISSING DATA BY VARIABLE \n")
-
-
- MISSING DATA BY VARIABLE 
 pfi_analysis %>%
   summarise(across(everything(), ~sum(is.na(.)))) %>%
   pivot_longer(everything(), names_to = "variable", values_to = "n_missing") %>%
   mutate(pct_missing = round(n_missing / nrow(pfi_analysis) * 100, 1)) %>%
   arrange(desc(n_missing)) %>%
   print(n = Inf)
+```
 
-KEY FINDINGS: - race_ethnicity: 46.7% missing - Include with “Unknown” category - has_school_choice: 31.3% missing - EXCLUDE (confounded with year) - at_risk: 7.6% missing - Acceptable for binary logistic model - grade_level: 1.3% missing - Minimal impact - All engagement variables: 0% missing - No issues
-
+KEY FINDINGS:
+  - race_ethnicity: 46.7% missing - Include with "Unknown" category
+  - has_school_choice: 31.3% missing - EXCLUDE (confounded with year)
+  - at_risk: 7.6% missing - Acceptable for binary logistic model
+  - grade_level: 1.3% missing - Minimal impact
+  - All engagement variables: 0% missing - No issues
+  
+  
+```{r}
 # Check structure
 cat("\nVariables in final dataset:\n")
-
 print(names(pfi_analysis))
-               
+```
+
+
+```{r}
 # Summary of key variables
 cat("\n OUTCOME VARIABLE DISTRIBUTION \n")
-
-
- OUTCOME VARIABLE DISTRIBUTION 
 print(table(pfi_analysis$grades_cat, useNA = "always"))
 
 cat("\n AT-RISK INDICATOR \n")
-
-
- AT-RISK INDICATOR 
 print(table(pfi_analysis$at_risk, useNA = "always"))
 
 cat("\n INCOME DISTRIBUTION \n")
-
-
- INCOME DISTRIBUTION 
 print(table(pfi_analysis$income_3cat, useNA = "always"))
 
 cat("\n PARENT EDUCATION DISTRIBUTION \n")
-
-
- PARENT EDUCATION DISTRIBUTION 
 print(table(pfi_analysis$parent_ed_3cat, useNA = "always"))
 
-
- ENGAGEMENT SCORE SUMMARY 
+cat("\n ENGAGEMENT SCORE SUMMARY \n")
 print(summary(pfi_analysis$school_engagement))
-
-INTERPRETATION: - Not at-risk: 22,140 (94.4%) - At-risk: 1,327 (5.7%) WARNING: Severe class imbalance will likely cause overfitting in binary logistic!
-
-Save Cleaned Data
+```
+INTERPRETATION:
+  - Not at-risk: 22,140 (94.4%)
+  - At-risk: 1,327 (5.7%)
+  WARNING: Severe class imbalance will likely cause overfitting in binary logistic!
+  
+##### Save Cleaned Data
+```{r save}
 # Save as RDS for easy loading
 saveRDS(pfi_analysis, "pfi_analysis_data.rds")
 
 cat("Data saved \n")
+```
 
-Data saved 
+
+```{r prepare_exploration}
 library(GGally)
 library(patchwork)
 library(scales)
@@ -422,7 +453,11 @@ pfi_explore <- pfi_analysis %>%
   filter(!is.na(at_risk))
 
 cat("Data prepared for exploratory analysis:", nrow(pfi_explore), "observations\n")
-Quick Summary
+```
+
+##### Quick Summary
+```{r summary}
 # Summary of key variables
 summary(pfi_analysis %>% select(grades_cat, at_risk, school_engagement,
                                 income_3cat, parent_education))
+```
